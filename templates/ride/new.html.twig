@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Proposer un trajet - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Proposer un trajet</h1>
+
+        {{ form_start(rideForm) }}
+
+            {{ form_errors(rideForm) }}
+
+            {{ form_row(rideForm.departureCity) }}
+            {{ form_row(rideForm.arrivalCity) }}
+            {{ form_row(rideForm.departureAt) }}
+            {{ form_row(rideForm.availableSeats) }}
+            {{ form_row(rideForm.price) }}
+
+            <button type="submit">
+                Publier le trajet
+            </button>
+
+        {{ form_end(rideForm) }}
+    </main>
+{% endblock %}
