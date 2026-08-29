@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Créer un compte</h1>
+
+        {{ form_start(registrationForm) }}
+
+            {{ form_errors(registrationForm) }}
+
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.firstName) }}
+            {{ form_row(registrationForm.lastName) }}
+            {{ form_row(registrationForm.phone) }}
+            {{ form_row(registrationForm.plainPassword) }}
+
+            <button type="submit">
+                S'inscrire
+            </button>
+
+        {{ form_end(registrationForm) }}
+    </main>
+{% endblock %}
