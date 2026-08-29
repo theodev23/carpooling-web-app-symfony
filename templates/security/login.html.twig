@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Connexion</h1>
+
+        {% if error %}
+            <p>{{ error.messageKey }}</p>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login') }}">
+            <div>
+                <label for="email">Adresse email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="_username"
+                    value="{{ lastUsername }}"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div>
+                <label for="password">Mot de passe</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="_password"
+                    required
+                >
+            </div>
+
+            <input
+                type="hidden"
+                name="_csrf_token"
+                value="{{ csrf_token('authenticate') }}"
+            >
+
+            <button type="submit">
+                Se connecter
+            </button>
+        </form>
+    </main>
+{% endblock %}
