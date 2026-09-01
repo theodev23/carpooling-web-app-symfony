@@ -18,6 +18,26 @@ This repository is a modernization of an earlier academic application originally
 | Driver view | View the passengers registered for one of your rides |
 | Authorization | Protected personal pages and ownership checks |
 
+## Screenshots
+
+### Ride discovery
+
+Search upcoming rides, view availability and booking status, and distinguish between available, already booked, and personally created rides.
+
+![Ride discovery](docs/screenshots/rides.png)
+
+### Driver passenger view
+
+Drivers can review the passengers registered for one of their rides, including their contact information.
+
+![Ride passengers](docs/screenshots/passengers.png)
+
+### Passenger reservations
+
+Passengers can review their upcoming bookings and cancel eligible reservations.
+
+![Passenger reservations](docs/screenshots/bookings.png)
+
 ## Tech stack
 
 | Category | Technologies |
@@ -114,7 +134,7 @@ The application follows standard Symfony responsibilities: controllers handle HT
 
 ## Automated tests
 
-The current functional test suite contains **16 tests and 122 assertions**.
+The current functional test suite contains **16 tests and 125 assertions**.
 
 | Test area | Scenarios |
 | --- | ---: |
