@@ -36,6 +36,7 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
         - { path: ^/rides/new$, roles: ROLE_USER }
+        - { path: ^/rides/[0-9]+/book$, roles: ROLE_USER }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
