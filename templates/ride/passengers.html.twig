@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Passagers du trajet - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Passagers du trajet</h1>
+
+        <h2>
+            {{ ride.departureCity }}
+            →
+            {{ ride.arrivalCity }}
+        </h2>
+
+        <p>
+            Départ :
+            {{ ride.departureAt|date('d/m/Y à H:i') }}
+        </p>
+
+        {% if bookings is empty %}
+            <p>Aucun passager n'a réservé ce trajet.</p>
+        {% else %}
+            {% for booking in bookings %}
+                <article>
+                    <h3>
+                        {{ booking.passenger.firstName }}
+                        {{ booking.passenger.lastName }}
+                    </h3>
+
+                    <p>
+                        Email :
+                        {{ booking.passenger.email }}
+                    </p>
+
+                    {% if booking.passenger.phone %}
+                        <p>
+                            Téléphone :
+                            {{ booking.passenger.phone }}
+                        </p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        {% endif %}
+
+        <p>
+            <a href="{{ path('app_ride_mine') }}">
+                Retour à mes trajets
+            </a>
+        </p>
+    </main>
+{% endblock %}

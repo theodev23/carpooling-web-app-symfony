@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ride;
 use App\Entity\User;
+use App\Repository\BookingRepository;
 use App\Form\RideFormType;
 use App\Repository\RideRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,46 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RideController extends AbstractController
 {
+    #[Route(
+        '/rides/{id}/passengers',
+        name: 'app_ride_passengers',
+        requirements: ['id' => '\\d+'],
+        methods: ['GET'],
+    )]
+    public function passengers(
+        int $id,
+        RideRepository $rideRepository,
+        BookingRepository $bookingRepository,
+    ): Response {
+        $driver = $this->getUser();
+
+        if (!$driver instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $ride = $rideRepository->find($id);
+
+        if (!$ride instanceof Ride) {
+            throw $this->createNotFoundException(
+                'Trajet introuvable.'
+            );
+        }
+
+        if ($ride->getDriver()?->getId() !== $driver->getId()) {
+            throw $this->createAccessDeniedException(
+                'Ce trajet ne vous appartient pas.'
+            );
+        }
+
+        return $this->render(
+            'ride/passengers.html.twig',
+            [
+                'ride' => $ride,
+                'bookings' => $bookingRepository->findForRide($ride),
+            ],
+        );
+    }
+
     #[Route('/rides/mine', name: 'app_ride_mine', methods: ['GET'])]
     public function mine(
         RideRepository $rideRepository,

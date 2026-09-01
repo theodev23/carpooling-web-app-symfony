@@ -32,6 +32,15 @@
                         {{ ride.price|number_format(2, ',', ' ') }}
                         € / passager
                     </p>
+
+                    <p>
+                        <a href="{{ path(
+                            'app_ride_passengers',
+                            {id: ride.id}
+                        ) }}">
+                            Voir les passagers
+                        </a>
+                    </p>
                 </article>
             {% endfor %}
         {% endif %}

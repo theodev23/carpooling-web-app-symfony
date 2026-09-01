@@ -37,6 +37,7 @@ security:
     access_control:
         - { path: ^/rides/new$, roles: ROLE_USER }
         - { path: ^/rides/mine$, roles: ROLE_USER }
+        - { path: ^/rides/[0-9]+/passengers$, roles: ROLE_USER }
         - { path: ^/rides/[0-9]+/book$, roles: ROLE_USER }
         - { path: ^/bookings/[0-9]+/cancel$, roles: ROLE_USER }
         - { path: ^/bookings$, roles: ROLE_USER }
