@@ -144,11 +144,17 @@ class BookingFlowTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $secondForm = $crawler
-            ->selectButton('Réserver')
-            ->form();
+        self::assertSelectorTextContains(
+            'article',
+            'Déjà réservé',
+        );
 
-        $this->client->submit($secondForm);
+        self::assertCount(
+            0,
+            $crawler->selectButton('Réserver'),
+        );
+
+        $this->client->submit($form);
 
         self::assertResponseRedirects('/rides');
 

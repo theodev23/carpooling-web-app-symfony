@@ -184,6 +184,10 @@
                                     <p class="ride-owner">
                                         Votre trajet
                                     </p>
+                                {% elseif ride.id in bookedRideIds %}
+                                    <p class="ride-owner">
+                                        Déjà réservé
+                                    </p>
                                 {% else %}
                                     <form
                                         method="post"

@@ -77,6 +77,7 @@ class RideController extends AbstractController
     public function index(
         Request $request,
         RideRepository $rideRepository,
+        BookingRepository $bookingRepository,
     ): Response {
         $departureCity = trim(
             (string) $request->query->get('departureCity', '')
@@ -118,10 +119,24 @@ class RideController extends AbstractController
             );
         }
 
+        $bookedRideIds = [];
+        $user = $this->getUser();
+
+        if ($user instanceof User) {
+            foreach ($bookingRepository->findForPassenger($user) as $booking) {
+                $rideId = $booking->getRide()?->getId();
+
+                if ($rideId !== null) {
+                    $bookedRideIds[] = $rideId;
+                }
+            }
+        }
+
         return $this->render(
             'ride/index.html.twig',
             [
                 'rides' => $rides,
+                'bookedRideIds' => $bookedRideIds,
                 'departureCity' => $departureCity,
                 'arrivalCity' => $arrivalCity,
                 'date' => $dateInput,
