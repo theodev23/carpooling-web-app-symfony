@@ -105,6 +105,177 @@ class BookingFlowTest extends WebTestCase
         );
     }
 
+    public function testPassengerCannotBookSameRideTwice(): void
+    {
+        $driver = $this->createUser(
+            'duplicate-driver@example.com',
+            'Driver',
+        );
+
+        $passenger = $this->createUser(
+            'duplicate-passenger@example.com',
+            'Passenger',
+        );
+
+        $ride = $this->createRide($driver);
+
+        $rideId = $ride->getId();
+
+        self::assertNotNull($rideId);
+
+        $this->client->loginUser($passenger);
+
+        $crawler = $this->client->request(
+            'GET',
+            '/rides',
+        );
+
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler
+            ->selectButton('Réserver')
+            ->form();
+
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/rides');
+
+        $crawler = $this->client->followRedirect();
+
+        self::assertResponseIsSuccessful();
+
+        $secondForm = $crawler
+            ->selectButton('Réserver')
+            ->form();
+
+        $this->client->submit($secondForm);
+
+        self::assertResponseRedirects('/rides');
+
+        $entityManager = static::getContainer()
+            ->get(EntityManagerInterface::class);
+
+        $entityManager->clear();
+
+        $bookingCount = $entityManager
+            ->getRepository(Booking::class)
+            ->count([]);
+
+        self::assertSame(
+            1,
+            $bookingCount,
+        );
+
+        $updatedRide = $entityManager->find(
+            Ride::class,
+            $rideId,
+        );
+
+        self::assertInstanceOf(
+            Ride::class,
+            $updatedRide,
+        );
+
+        self::assertSame(
+            2,
+            $updatedRide->getAvailableSeats(),
+        );
+    }
+
+    public function testDriverCannotBookOwnRide(): void
+    {
+        $temporaryDriver = $this->createUser(
+            'temporary-driver@example.com',
+            'Temporary',
+        );
+
+        $futureDriver = $this->createUser(
+            'future-driver@example.com',
+            'Owner',
+        );
+
+        $ride = $this->createRide($temporaryDriver);
+
+        $rideId = $ride->getId();
+        $futureDriverId = $futureDriver->getId();
+
+        self::assertNotNull($rideId);
+        self::assertNotNull($futureDriverId);
+
+        $this->client->loginUser($futureDriver);
+
+        $crawler = $this->client->request(
+            'GET',
+            '/rides',
+        );
+
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler
+            ->selectButton('Réserver')
+            ->form();
+
+        $entityManager = static::getContainer()
+            ->get(EntityManagerInterface::class);
+
+        $currentRide = $entityManager->find(
+            Ride::class,
+            $rideId,
+        );
+
+        $currentDriver = $entityManager->find(
+            User::class,
+            $futureDriverId,
+        );
+
+        self::assertInstanceOf(
+            Ride::class,
+            $currentRide,
+        );
+
+        self::assertInstanceOf(
+            User::class,
+            $currentDriver,
+        );
+
+        $currentRide->setDriver($currentDriver);
+
+        $entityManager->flush();
+
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/rides');
+
+        $entityManager = static::getContainer()
+            ->get(EntityManagerInterface::class);
+
+        $entityManager->clear();
+
+        $bookingCount = $entityManager
+            ->getRepository(Booking::class)
+            ->count([]);
+
+        self::assertSame(
+            0,
+            $bookingCount,
+        );
+
+        $updatedRide = $entityManager->find(
+            Ride::class,
+            $rideId,
+        );
+
+        self::assertInstanceOf(
+            Ride::class,
+            $updatedRide,
+        );
+
+        self::assertSame(
+            3,
+            $updatedRide->getAvailableSeats(),
+        );
+    }
+
     private function createUser(
         string $email,
         string $firstName,
