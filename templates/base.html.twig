@@ -2,19 +2,15 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
-
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1"
         >
-
         <title>{% block title %}Car-naval{% endblock %}</title>
-
         <link
             rel="stylesheet"
             href="/styles/app.css"
         >
-
         {% block stylesheets %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </head>
@@ -26,7 +22,11 @@
                     class="brand"
                     href="{{ path('app_home') }}"
                 >
-                    Car-naval
+                    <span class="brand-mark">C</span>
+
+                    <span>
+                        Car<span class="brand-accent">-</span>naval
+                    </span>
                 </a>
 
                 <div class="navigation-links">
@@ -39,11 +39,14 @@
                     </a>
 
                     {% if app.user %}
-                        <span>
+                        <span class="user-greeting">
                             Bonjour {{ app.user.firstName }}
                         </span>
 
-                        <a href="{{ path('app_ride_new') }}">
+                        <a
+                            class="nav-cta"
+                            href="{{ path('app_ride_new') }}"
+                        >
                             Proposer un trajet
                         </a>
 
@@ -63,7 +66,10 @@
                             Connexion
                         </a>
 
-                        <a href="{{ path('app_register') }}">
+                        <a
+                            class="nav-cta"
+                            href="{{ path('app_register') }}"
+                        >
                             Inscription
                         </a>
                     {% endif %}

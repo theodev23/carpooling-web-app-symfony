@@ -3,46 +3,110 @@
 {% block title %}Mes trajets proposés - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Mes trajets proposés</h1>
+    <main class="personal-page">
+        <header class="personal-header">
+            <div class="personal-header-copy">
+                <p class="eyebrow">
+                    Espace conducteur
+                </p>
+
+                <h1>Mes trajets proposés</h1>
+
+                <p>
+                    Retrouvez les covoiturages que vous avez publiés
+                    et consultez les passagers inscrits.
+                </p>
+            </div>
+
+            <a
+                class="button"
+                href="{{ path('app_ride_new') }}"
+            >
+                Proposer un trajet
+            </a>
+        </header>
 
         {% if rides is empty %}
-            <p>Vous n'avez proposé aucun trajet.</p>
+            <section class="empty-state">
+                <h2>Aucun trajet proposé</h2>
+
+                <p>
+                    Publiez votre premier trajet pour commencer
+                    à accueillir des passagers.
+                </p>
+            </section>
         {% else %}
-            {% for ride in rides %}
-                <article>
-                    <h2>
-                        {{ ride.departureCity }}
-                        →
-                        {{ ride.arrivalCity }}
-                    </h2>
+            <section class="personal-grid">
+                {% for ride in rides %}
+                    <article class="personal-card">
+                        <header class="personal-card-header">
+                            <h2>
+                                {{ ride.departureCity }}
+                                <span class="ride-arrow">→</span>
+                                {{ ride.arrivalCity }}
+                            </h2>
 
-                    <p>
-                        Départ :
-                        {{ ride.departureAt|date('d/m/Y à H:i') }}
-                    </p>
+                            <p class="personal-card-date">
+                                Départ le
+                                {{ ride.departureAt|date(
+                                    'd/m/Y à H\\:i'
+                                ) }}
+                            </p>
+                        </header>
 
-                    <p>
-                        Places disponibles :
-                        {{ ride.availableSeats }}
-                    </p>
+                        <div class="personal-card-body">
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <span class="info-label">
+                                        Places disponibles
+                                    </span>
 
-                    <p>
-                        Prix :
-                        {{ ride.price|number_format(2, ',', ' ') }}
-                        € / passager
-                    </p>
+                                    <span class="info-value">
+                                        {{ ride.availableSeats }}
+                                    </span>
+                                </div>
 
-                    <p>
-                        <a href="{{ path(
-                            'app_ride_passengers',
-                            {id: ride.id}
-                        ) }}">
-                            Voir les passagers
-                        </a>
-                    </p>
-                </article>
-            {% endfor %}
+                                <div class="info-item">
+                                    <span class="info-label">
+                                        Prix par passager
+                                    </span>
+
+                                    <span class="info-value">
+                                        {{ ride.price|number_format(
+                                            2,
+                                            ',',
+                                            ' '
+                                        ) }}
+                                        €
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <footer class="personal-card-footer">
+                            {% if ride.departureAt > date() %}
+                                <span class="status-label">
+                                    Trajet à venir
+                                </span>
+                            {% else %}
+                                <span class="status-label">
+                                    Trajet terminé
+                                </span>
+                            {% endif %}
+
+                            <a
+                                class="text-action"
+                                href="{{ path(
+                                    'app_ride_passengers',
+                                    {id: ride.id}
+                                ) }}"
+                            >
+                                Voir les passagers
+                            </a>
+                        </footer>
+                    </article>
+                {% endfor %}
+            </section>
         {% endif %}
     </main>
 {% endblock %}

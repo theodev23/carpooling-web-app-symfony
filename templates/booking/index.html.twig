@@ -3,72 +3,136 @@
 {% block title %}Mes réservations - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Mes réservations</h1>
+    <main class="personal-page">
+        <header class="personal-header">
+            <div class="personal-header-copy">
+                <p class="eyebrow">
+                    Espace passager
+                </p>
+
+                <h1>Mes réservations</h1>
+
+                <p>
+                    Consultez vos prochains covoiturages et
+                    retrouvez les informations de vos conducteurs.
+                </p>
+            </div>
+
+            <a
+                class="button"
+                href="{{ path('app_ride_index') }}"
+            >
+                Trouver un trajet
+            </a>
+        </header>
 
         {% for message in app.flashes('success') %}
-            <p>{{ message }}</p>
+            <p class="flash-message flash-success">
+                {{ message }}
+            </p>
         {% endfor %}
 
         {% for message in app.flashes('error') %}
-            <p>{{ message }}</p>
+            <p class="flash-message flash-error">
+                {{ message }}
+            </p>
         {% endfor %}
 
         {% if bookings is empty %}
-            <p>Vous n'avez aucune réservation.</p>
+            <section class="empty-state">
+                <h2>Aucune réservation</h2>
+
+                <p>
+                    Recherchez un trajet disponible et réservez
+                    votre prochaine place.
+                </p>
+            </section>
         {% else %}
-            {% for booking in bookings %}
-                <article>
-                    <h2>
-                        {{ booking.ride.departureCity }}
-                        →
-                        {{ booking.ride.arrivalCity }}
-                    </h2>
+            <section class="personal-grid">
+                {% for booking in bookings %}
+                    <article class="personal-card">
+                        <header class="personal-card-header">
+                            <h2>
+                                {{ booking.ride.departureCity }}
+                                <span class="ride-arrow">→</span>
+                                {{ booking.ride.arrivalCity }}
+                            </h2>
 
-                    <p>
-                        Départ :
-                        {{ booking.ride.departureAt|date('d/m/Y à H:i') }}
-                    </p>
+                            <p class="personal-card-date">
+                                Départ le
+                                {{ booking.ride.departureAt|date(
+                                    'd/m/Y à H\\:i'
+                                ) }}
+                            </p>
+                        </header>
 
-                    <p>
-                        Prix :
-                        {{ booking.ride.price|number_format(2, ',', ' ') }}
-                        € / passager
-                    </p>
+                        <div class="personal-card-body">
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <span class="info-label">
+                                        Prix
+                                    </span>
 
-                    <p>
-                        Conducteur :
-                        {{ booking.ride.driver.firstName }}
-                        {{ booking.ride.driver.lastName }}
-                    </p>
+                                    <span class="info-value">
+                                        {{ booking.ride.price|number_format(
+                                            2,
+                                            ',',
+                                            ' '
+                                        ) }}
+                                        €
+                                    </span>
+                                </div>
 
-                    {% if booking.ride.departureAt > date() %}
-                        <form
-                            method="post"
-                            action="{{ path(
-                                'app_booking_cancel',
-                                {id: booking.id}
-                            ) }}"
-                        >
-                            <input
-                                type="hidden"
-                                name="_token"
-                                value="{{ csrf_token(
-                                    'cancel_booking_' ~ booking.id
-                                ) }}"
-                            >
+                                <div class="info-item">
+                                    <span class="info-label">
+                                        Conducteur
+                                    </span>
 
-                            <button type="submit">
-                                Annuler la réservation
-                            </button>
-                        </form>
-                    {% else %}
-                        <p>
-                            Trajet terminé.
-                        </p>
-                    {% endif %}
-                </article>
-            {% endfor %}
+                                    <span class="info-value">
+                                        {{ booking.ride.driver.firstName }}
+                                        {{ booking.ride.driver.lastName }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <footer class="personal-card-footer">
+                            {% if booking.ride.departureAt > date() %}
+                                <span class="status-label">
+                                    Réservation confirmée
+                                </span>
+
+                                <form
+                                    method="post"
+                                    action="{{ path(
+                                        'app_booking_cancel',
+                                        {id: booking.id}
+                                    ) }}"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token(
+                                            'cancel_booking_' ~ booking.id
+                                        ) }}"
+                                    >
+
+                                    <button
+                                        class="danger-button"
+                                        type="submit"
+                                    >
+                                        Annuler la réservation
+                                    </button>
+                                </form>
+                            {% else %}
+                                <p class="status-label">
+                                    Trajet terminé.
+                                </p>
+                            {% endif %}
+                        </footer>
+                    </article>
+                {% endfor %}
+            </section>
         {% endif %}
     </main>
 {% endblock %}

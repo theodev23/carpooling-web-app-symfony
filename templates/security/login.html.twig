@@ -3,45 +3,93 @@
 {% block title %}Connexion - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Connexion</h1>
+    <main class="form-page">
+        <div class="form-layout">
+            <section class="form-introduction">
+                <p class="eyebrow">
+                    Votre espace Car-naval
+                </p>
 
-        {% if error %}
-            <p>{{ error.messageKey }}</p>
-        {% endif %}
+                <h1>
+                    Retrouvez vos trajets et vos réservations.
+                </h1>
 
-        <form method="post" action="{{ path('app_login') }}">
-            <div>
-                <label for="email">Adresse email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="_username"
-                    value="{{ lastUsername }}"
-                    required
-                    autofocus
+                <p>
+                    Connectez-vous pour réserver une place,
+                    proposer vos propres trajets et gérer votre
+                    activité sur Car-naval.
+                </p>
+
+                <ul class="form-benefits">
+                    <li>Réserver les trajets disponibles</li>
+                    <li>Proposer vos propres covoiturages</li>
+                    <li>Suivre vos trajets et réservations</li>
+                </ul>
+            </section>
+
+            <section class="form-card">
+                <h2>Connexion</h2>
+
+                <p class="form-card-intro">
+                    Saisissez les identifiants associés à votre compte.
+                </p>
+
+                {% if error %}
+                    <p class="form-error-message">
+                        {{ error.messageKey }}
+                    </p>
+                {% endif %}
+
+                <form
+                    method="post"
+                    action="{{ path('app_login') }}"
                 >
-            </div>
+                    <div>
+                        <label for="email">
+                            Adresse email
+                        </label>
 
-            <div>
-                <label for="password">Mot de passe</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="_password"
-                    required
-                >
-            </div>
+                        <input
+                            type="email"
+                            id="email"
+                            name="_username"
+                            value="{{ lastUsername }}"
+                            required
+                            autofocus
+                        >
+                    </div>
 
-            <input
-                type="hidden"
-                name="_csrf_token"
-                value="{{ csrf_token('authenticate') }}"
-            >
+                    <div>
+                        <label for="password">
+                            Mot de passe
+                        </label>
 
-            <button type="submit">
-                Se connecter
-            </button>
-        </form>
+                        <input
+                            type="password"
+                            id="password"
+                            name="_password"
+                            required
+                        >
+                    </div>
+
+                    <input
+                        type="hidden"
+                        name="_csrf_token"
+                        value="{{ csrf_token('authenticate') }}"
+                    >
+
+                    <button type="submit">
+                        Se connecter
+                    </button>
+                </form>
+
+                <p class="form-footer">
+                    Pas encore de compte ?
+                    <a href="{{ path('app_register') }}">
+                        Créer un compte
+                    </a>
+                </p>
+            </section>
+        </div>
     </main>
 {% endblock %}

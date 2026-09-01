@@ -3,23 +3,61 @@
 {% block title %}Inscription - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Créer un compte</h1>
+    <main class="form-page">
+        <div class="form-layout">
+            <section class="form-introduction">
+                <p class="eyebrow">
+                    Rejoindre Car-naval
+                </p>
 
-        {{ form_start(registrationForm) }}
+                <h1>
+                    Créez votre compte et prenez la route.
+                </h1>
 
-            {{ form_errors(registrationForm) }}
+                <p>
+                    Quelques informations suffisent pour commencer
+                    à rechercher, réserver ou proposer des trajets.
+                </p>
 
-            {{ form_row(registrationForm.email) }}
-            {{ form_row(registrationForm.firstName) }}
-            {{ form_row(registrationForm.lastName) }}
-            {{ form_row(registrationForm.phone) }}
-            {{ form_row(registrationForm.plainPassword) }}
+                <ul class="form-benefits">
+                    <li>Un espace personnel pour vos réservations</li>
+                    <li>La possibilité de devenir conducteur</li>
+                    <li>Une gestion simple de vos trajets</li>
+                </ul>
+            </section>
 
-            <button type="submit">
-                S'inscrire
-            </button>
+            <section class="form-card">
+                <h2>Créer un compte</h2>
 
-        {{ form_end(registrationForm) }}
+                <p class="form-card-intro">
+                    Renseignez vos informations personnelles.
+                </p>
+
+                {{ form_start(registrationForm) }}
+                    {{ form_errors(registrationForm) }}
+
+                    {{ form_row(registrationForm.email) }}
+
+                    {{ form_row(registrationForm.firstName) }}
+
+                    {{ form_row(registrationForm.lastName) }}
+
+                    {{ form_row(registrationForm.phone) }}
+
+                    {{ form_row(registrationForm.plainPassword) }}
+
+                    <button type="submit">
+                        S'inscrire
+                    </button>
+                {{ form_end(registrationForm) }}
+
+                <p class="form-footer">
+                    Vous avez déjà un compte ?
+                    <a href="{{ path('app_login') }}">
+                        Se connecter
+                    </a>
+                </p>
+            </section>
+        </div>
     </main>
 {% endblock %}

@@ -3,48 +3,103 @@
 {% block title %}Passagers du trajet - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Passagers du trajet</h1>
+    <main class="personal-page">
+        <header class="personal-header">
+            <div class="personal-header-copy">
+                <p class="eyebrow">
+                    Espace conducteur
+                </p>
 
-        <h2>
-            {{ ride.departureCity }}
-            →
-            {{ ride.arrivalCity }}
-        </h2>
+                <h1>Passagers du trajet</h1>
 
-        <p>
-            Départ :
-            {{ ride.departureAt|date('d/m/Y à H:i') }}
-        </p>
+                <p>
+                    Consultez les personnes ayant réservé une place
+                    sur votre covoiturage.
+                </p>
+            </div>
+        </header>
+
+        <section class="passenger-summary">
+            <div>
+                <h2>
+                    {{ ride.departureCity }}
+                    →
+                    {{ ride.arrivalCity }}
+                </h2>
+
+                <p>
+                    Départ le
+                    {{ ride.departureAt|date('d/m/Y à H\\:i') }}
+                </p>
+            </div>
+
+            <div
+                class="passenger-count"
+                title="Nombre de passagers"
+            >
+                {{ bookings|length }}
+            </div>
+        </section>
 
         {% if bookings is empty %}
-            <p>Aucun passager n'a réservé ce trajet.</p>
+            <section class="empty-state">
+                <h2>Aucun passager inscrit</h2>
+
+                <p>
+                    Les réservations apparaîtront ici lorsqu'un
+                    passager réservera ce trajet.
+                </p>
+            </section>
         {% else %}
-            {% for booking in bookings %}
-                <article>
-                    <h3>
-                        {{ booking.passenger.firstName }}
-                        {{ booking.passenger.lastName }}
-                    </h3>
+            <section class="personal-grid">
+                {% for booking in bookings %}
+                    <article class="personal-card passenger-card">
+                        <div class="personal-card-body">
+                            <div class="passenger-avatar">
+                                {{ booking.passenger.firstName|first }}
+                                {{ booking.passenger.lastName|first }}
+                            </div>
 
-                    <p>
-                        Email :
-                        {{ booking.passenger.email }}
-                    </p>
+                            <h3>
+                                {{ booking.passenger.firstName }}
+                                {{ booking.passenger.lastName }}
+                            </h3>
 
-                    {% if booking.passenger.phone %}
-                        <p>
-                            Téléphone :
-                            {{ booking.passenger.phone }}
-                        </p>
-                    {% endif %}
-                </article>
-            {% endfor %}
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <span class="info-label">
+                                        Email
+                                    </span>
+
+                                    <span class="info-value">
+                                        {{ booking.passenger.email }}
+                                    </span>
+                                </div>
+
+                                {% if booking.passenger.phone %}
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            Téléphone
+                                        </span>
+
+                                        <span class="info-value">
+                                            {{ booking.passenger.phone }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
         {% endif %}
 
-        <p>
-            <a href="{{ path('app_ride_mine') }}">
-                Retour à mes trajets
+        <p class="back-link">
+            <a
+                class="text-action"
+                href="{{ path('app_ride_mine') }}"
+            >
+                ← Retour à mes trajets
             </a>
         </p>
     </main>

@@ -3,23 +3,55 @@
 {% block title %}Proposer un trajet - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Proposer un trajet</h1>
+    <main class="form-page">
+        <div class="form-layout">
+            <section class="form-introduction">
+                <p class="eyebrow">
+                    Espace conducteur
+                </p>
 
-        {{ form_start(rideForm) }}
+                <h1>
+                    Proposez votre prochain trajet.
+                </h1>
 
-            {{ form_errors(rideForm) }}
+                <p>
+                    Indiquez votre itinéraire, la date du départ,
+                    le nombre de places disponibles et le prix
+                    demandé par passager.
+                </p>
 
-            {{ form_row(rideForm.departureCity) }}
-            {{ form_row(rideForm.arrivalCity) }}
-            {{ form_row(rideForm.departureAt) }}
-            {{ form_row(rideForm.availableSeats) }}
-            {{ form_row(rideForm.price) }}
+                <ul class="form-benefits">
+                    <li>Publication simple du trajet</li>
+                    <li>Suivi des places disponibles</li>
+                    <li>Consultation des passagers inscrits</li>
+                </ul>
+            </section>
 
-            <button type="submit">
-                Publier le trajet
-            </button>
+            <section class="form-card">
+                <h2>Nouveau trajet</h2>
 
-        {{ form_end(rideForm) }}
+                <p class="form-card-intro">
+                    Complétez les informations du covoiturage.
+                </p>
+
+                {{ form_start(rideForm) }}
+                    {{ form_errors(rideForm) }}
+
+                    {{ form_row(rideForm.departureCity) }}
+
+                    {{ form_row(rideForm.arrivalCity) }}
+
+                    {{ form_row(rideForm.departureAt) }}
+
+                    {{ form_row(rideForm.availableSeats) }}
+
+                    {{ form_row(rideForm.price) }}
+
+                    <button type="submit">
+                        Publier le trajet
+                    </button>
+                {{ form_end(rideForm) }}
+            </section>
+        </div>
     </main>
 {% endblock %}

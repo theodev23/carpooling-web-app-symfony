@@ -3,136 +3,220 @@
 {% block title %}Trajets disponibles - Car-naval{% endblock %}
 
 {% block body %}
-    <main>
-        <h1>Trajets disponibles</h1>
+    <main class="content-container">
+        <header class="page-heading">
+            <p class="eyebrow">
+                Trouver votre prochain trajet
+            </p>
+
+            <h1>Trajets disponibles</h1>
+
+            <p>
+                Recherchez un covoiturage selon votre point de départ,
+                votre destination et la date souhaitée.
+            </p>
+        </header>
 
         {% for message in app.flashes('success') %}
-            <p>{{ message }}</p>
+            <p class="flash-message flash-success">
+                {{ message }}
+            </p>
         {% endfor %}
 
         {% for message in app.flashes('error') %}
-            <p>{{ message }}</p>
+            <p class="flash-message flash-error">
+                {{ message }}
+            </p>
         {% endfor %}
 
-        <form
-            method="get"
-            action="{{ path('app_ride_index') }}"
-        >
-            <div>
-                <label for="departureCity">
-                    Ville de départ
-                </label>
+        <section class="search-panel">
+            <form
+                method="get"
+                action="{{ path('app_ride_index') }}"
+            >
+                <div class="search-grid">
+                    <div>
+                        <label for="departureCity">
+                            Ville de départ
+                        </label>
 
-                <input
-                    type="text"
-                    id="departureCity"
-                    name="departureCity"
-                    value="{{ departureCity }}"
-                >
-            </div>
+                        <input
+                            type="text"
+                            id="departureCity"
+                            name="departureCity"
+                            value="{{ departureCity }}"
+                            placeholder="Ex. Montpellier"
+                        >
+                    </div>
 
-            <div>
-                <label for="arrivalCity">
-                    Ville d'arrivée
-                </label>
+                    <div>
+                        <label for="arrivalCity">
+                            Ville d'arrivée
+                        </label>
 
-                <input
-                    type="text"
-                    id="arrivalCity"
-                    name="arrivalCity"
-                    value="{{ arrivalCity }}"
-                >
-            </div>
+                        <input
+                            type="text"
+                            id="arrivalCity"
+                            name="arrivalCity"
+                            value="{{ arrivalCity }}"
+                            placeholder="Ex. Nîmes"
+                        >
+                    </div>
 
-            <div>
-                <label for="date">
-                    Date
-                </label>
+                    <div>
+                        <label for="date">
+                            Date
+                        </label>
 
-                <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value="{{ date }}"
-                >
+                        <input
+                            type="date"
+                            id="date"
+                            name="date"
+                            value="{{ date }}"
+                        >
 
-                {% if dateError %}
-                    <p>{{ dateError }}</p>
-                {% endif %}
-            </div>
+                        {% if dateError %}
+                            <p class="form-error">
+                                {{ dateError }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
 
-            <button type="submit">
-                Rechercher
-            </button>
+                <div class="search-actions">
+                    <button type="submit">
+                        Rechercher
+                    </button>
 
-            <a href="{{ path('app_ride_index') }}">
-                Réinitialiser
-            </a>
-        </form>
+                    <a
+                        class="reset-link"
+                        href="{{ path('app_ride_index') }}"
+                    >
+                        Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </section>
 
         {% if rides is empty %}
-            <p>Aucun trajet disponible pour le moment.</p>
+            <section class="empty-state">
+                <h2>Aucun trajet trouvé</h2>
+
+                <p>
+                    Modifiez vos critères de recherche ou consultez
+                    de nouveau les trajets prochainement.
+                </p>
+            </section>
         {% else %}
-            {% for ride in rides %}
-                <article>
-                    <h2>
-                        {{ ride.departureCity }}
-                        →
-                        {{ ride.arrivalCity }}
-                    </h2>
+            <section class="rides-grid">
+                {% for ride in rides %}
+                    <article class="ride-card">
+                        <div class="ride-card-top">
+                            <h2 class="ride-route">
+                                <span class="ride-city">
+                                    {{ ride.departureCity }}
+                                </span>
 
-                    <p>
-                        Départ :
-                        {{ ride.departureAt|date('d/m/Y à H:i') }}
-                    </p>
+                                <span class="ride-arrow">→</span>
 
-                    <p>
-                        Places disponibles :
-                        {{ ride.availableSeats }}
-                    </p>
+                                <span class="ride-city">
+                                    {{ ride.arrivalCity }}
+                                </span>
+                            </h2>
 
-                    <p>
-                        Prix :
-                        {{ ride.price|number_format(2, ',', ' ') }}
-                        € / passager
-                    </p>
-
-                    <p>
-                        Conducteur :
-                        {{ ride.driver.firstName }}
-                        {{ ride.driver.lastName }}
-                    </p>
-
-                    {% if app.user %}
-                        {% if app.user.id == ride.driver.id %}
-                            <p>
-                                Vous proposez ce trajet.
+                            <p class="ride-date">
+                                Départ le
+                                {{ ride.departureAt|date(
+                                    'd/m/Y à H\\:i'
+                                ) }}
                             </p>
-                        {% else %}
-                            <form
-                                method="post"
-                                action="{{ path('app_ride_book', {id: ride.id}) }}"
-                            >
-                                <input
-                                    type="hidden"
-                                    name="_token"
-                                    value="{{ csrf_token('book_ride_' ~ ride.id) }}"
-                                >
+                        </div>
 
-                                <button type="submit">
-                                    Réserver
-                                </button>
-                            </form>
-                        {% endif %}
-                    {% else %}
-                        <p>
-                            <a href="{{ path('app_login') }}">
-                                Connectez-vous pour réserver
-                            </a>
-                        </p>
-                    {% endif %}
-                </article>
-            {% endfor %}
+                        <div class="ride-details">
+                            <div class="ride-detail">
+                                <span class="ride-detail-label">
+                                    Places
+                                </span>
+
+                                <span class="ride-detail-value">
+                                    {{ ride.availableSeats }}
+                                    disponible{% if ride.availableSeats > 1 %}s{% endif %}
+                                </span>
+                            </div>
+
+                            <div class="ride-detail">
+                                <span class="ride-detail-label">
+                                    Prix
+                                </span>
+
+                                <span class="ride-detail-value">
+                                    {{ ride.price|number_format(
+                                        2,
+                                        ',',
+                                        ' '
+                                    ) }}
+                                    €
+                                </span>
+                            </div>
+
+                            <div class="ride-detail">
+                                <span class="ride-detail-label">
+                                    Conducteur
+                                </span>
+
+                                <span class="ride-detail-value">
+                                    {{ ride.driver.firstName }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="ride-card-footer">
+                            <p class="driver-name">
+                                Proposé par
+                                <strong>
+                                    {{ ride.driver.firstName }}
+                                    {{ ride.driver.lastName }}
+                                </strong>
+                            </p>
+
+                            {% if app.user %}
+                                {% if app.user.id == ride.driver.id %}
+                                    <p class="ride-owner">
+                                        Votre trajet
+                                    </p>
+                                {% else %}
+                                    <form
+                                        method="post"
+                                        action="{{ path(
+                                            'app_ride_book',
+                                            {id: ride.id}
+                                        ) }}"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token(
+                                                'book_ride_' ~ ride.id
+                                            ) }}"
+                                        >
+
+                                        <button type="submit">
+                                            Réserver
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            {% else %}
+                                <a
+                                    class="login-to-book"
+                                    href="{{ path('app_login') }}"
+                                >
+                                    Se connecter pour réserver
+                                </a>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
         {% endif %}
     </main>
 {% endblock %}

@@ -4,10 +4,164 @@
 
 {% block body %}
     <main>
-        <h1>{{ projectName }}</h1>
+        <section class="hero">
+            <div class="hero-inner">
+                <div class="hero-copy">
+                    <p class="eyebrow">
+                        Covoiturage simple et accessible
+                    </p>
 
-        <p>
-            Une application de covoiturage développée avec Symfony.
-        </p>
+                    <h1>
+                        Partagez la route.
+                        <span>Voyagez autrement.</span>
+                    </h1>
+
+                    <p class="hero-lead">
+                        Car-naval facilite la mise en relation entre
+                        conducteurs et passagers pour organiser leurs
+                        trajets simplement et en toute sécurité.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a
+                            class="button"
+                            href="{{ path('app_ride_index') }}"
+                        >
+                            Voir les trajets
+                        </a>
+
+                        {% if app.user %}
+                            <a
+                                class="button button-secondary"
+                                href="{{ path('app_ride_new') }}"
+                            >
+                                Proposer un trajet
+                            </a>
+                        {% else %}
+                            <a
+                                class="button button-secondary"
+                                href="{{ path('app_register') }}"
+                            >
+                                Créer un compte
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="hero-panel">
+                    <h2 class="hero-panel-title">
+                        Comment ça marche ?
+                    </h2>
+
+                    <div class="journey-step">
+                        <div class="step-number">1</div>
+
+                        <div class="step-content">
+                            <strong>Recherchez</strong>
+                            <span>
+                                Choisissez votre ville de départ,
+                                votre destination et votre date.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="journey-step">
+                        <div class="step-number">2</div>
+
+                        <div class="step-content">
+                            <strong>Réservez</strong>
+                            <span>
+                                Sélectionnez un trajet disposant
+                                encore de places.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="journey-step">
+                        <div class="step-number">3</div>
+
+                        <div class="step-content">
+                            <strong>Voyagez</strong>
+                            <span>
+                                Retrouvez votre réservation et
+                                partagez simplement le trajet.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="section-heading">
+                <p class="eyebrow">
+                    Une expérience claire
+                </p>
+
+                <h2>
+                    L'essentiel pour organiser un covoiturage
+                </h2>
+
+                <p>
+                    Une interface simple centrée sur les actions
+                    importantes pour les conducteurs et les passagers.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">01</div>
+
+                    <h3>Trajets disponibles</h3>
+
+                    <p>
+                        Recherchez les trajets selon la ville de départ,
+                        la destination et la date souhaitée.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">02</div>
+
+                    <h3>Réservation rapide</h3>
+
+                    <p>
+                        Réservez une place disponible et retrouvez
+                        ensuite vos réservations dans votre espace.
+                    </p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">03</div>
+
+                    <h3>Espace conducteur</h3>
+
+                    <p>
+                        Proposez vos trajets et consultez les passagers
+                        ayant réservé une place avec vous.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="home-callout">
+            <div class="home-callout-inner">
+                <div>
+                    <h2>Prêt à prendre la route ?</h2>
+
+                    <p>
+                        Consultez les prochains trajets disponibles
+                        sur Car-naval.
+                    </p>
+                </div>
+
+                <a
+                    class="button"
+                    href="{{ path('app_ride_index') }}"
+                >
+                    Explorer les trajets
+                </a>
+            </div>
+        </section>
     </main>
 {% endblock %}
