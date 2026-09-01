@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Mes réservations</h1>
+
+        {% if bookings is empty %}
+            <p>Vous n'avez aucune réservation.</p>
+        {% else %}
+            {% for booking in bookings %}
+                <article>
+                    <h2>
+                        {{ booking.ride.departureCity }}
+                        →
+                        {{ booking.ride.arrivalCity }}
+                    </h2>
+
+                    <p>
+                        Départ :
+                        {{ booking.ride.departureAt|date('d/m/Y à H:i') }}
+                    </p>
+
+                    <p>
+                        Prix :
+                        {{ booking.ride.price|number_format(2, ',', ' ') }}
+                        € / passager
+                    </p>
+
+                    <p>
+                        Conducteur :
+                        {{ booking.ride.driver.firstName }}
+                        {{ booking.ride.driver.lastName }}
+                    </p>
+                </article>
+            {% endfor %}
+        {% endif %}
+    </main>
+{% endblock %}

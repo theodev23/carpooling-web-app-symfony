@@ -17,6 +17,29 @@ use Symfony\Component\Routing\Attribute\Route;
 class BookingController extends AbstractController
 {
     #[Route(
+        '/bookings',
+        name: 'app_booking_index',
+        methods: ['GET'],
+    )]
+    public function index(
+        BookingRepository $bookingRepository,
+    ): Response {
+        $passenger = $this->getUser();
+
+        if (!$passenger instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render(
+            'booking/index.html.twig',
+            [
+                'bookings' => $bookingRepository
+                    ->findForPassenger($passenger),
+            ],
+        );
+    }
+
+    #[Route(
         '/rides/{id}/book',
         name: 'app_ride_book',
         requirements: ['id' => '\d+'],
