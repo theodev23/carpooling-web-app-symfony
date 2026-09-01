@@ -14,6 +14,24 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RideController extends AbstractController
 {
+    #[Route('/rides/mine', name: 'app_ride_mine', methods: ['GET'])]
+    public function mine(
+        RideRepository $rideRepository,
+    ): Response {
+        $driver = $this->getUser();
+
+        if (!$driver instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render(
+            'ride/mine.html.twig',
+            [
+                'rides' => $rideRepository->findForDriver($driver),
+            ],
+        );
+    }
+
     #[Route('/rides', name: 'app_ride_index', methods: ['GET'])]
     public function index(
         Request $request,

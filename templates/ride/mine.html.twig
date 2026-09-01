@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes trajets proposés - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Mes trajets proposés</h1>
+
+        {% if rides is empty %}
+            <p>Vous n'avez proposé aucun trajet.</p>
+        {% else %}
+            {% for ride in rides %}
+                <article>
+                    <h2>
+                        {{ ride.departureCity }}
+                        →
+                        {{ ride.arrivalCity }}
+                    </h2>
+
+                    <p>
+                        Départ :
+                        {{ ride.departureAt|date('d/m/Y à H:i') }}
+                    </p>
+
+                    <p>
+                        Places disponibles :
+                        {{ ride.availableSeats }}
+                    </p>
+
+                    <p>
+                        Prix :
+                        {{ ride.price|number_format(2, ',', ' ') }}
+                        € / passager
+                    </p>
+                </article>
+            {% endfor %}
+        {% endif %}
+    </main>
+{% endblock %}
