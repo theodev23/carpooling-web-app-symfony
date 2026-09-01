@@ -15,12 +15,58 @@ use Symfony\Component\Routing\Attribute\Route;
 class RideController extends AbstractController
 {
     #[Route('/rides', name: 'app_ride_index', methods: ['GET'])]
-    public function index(RideRepository $rideRepository): Response
-    {
+    public function index(
+        Request $request,
+        RideRepository $rideRepository,
+    ): Response {
+        $departureCity = trim(
+            (string) $request->query->get('departureCity', '')
+        );
+
+        $arrivalCity = trim(
+            (string) $request->query->get('arrivalCity', '')
+        );
+
+        $dateInput = trim(
+            (string) $request->query->get('date', '')
+        );
+
+        $date = null;
+        $dateError = null;
+
+        if ($dateInput !== '') {
+            $date = \DateTimeImmutable::createFromFormat(
+                '!Y-m-d',
+                $dateInput,
+            );
+
+            if (
+                !$date
+                || $date->format('Y-m-d') !== $dateInput
+            ) {
+                $date = null;
+                $dateError = 'Veuillez saisir une date valide.';
+            }
+        }
+
+        $rides = [];
+
+        if (!$dateError) {
+            $rides = $rideRepository->findAvailableRides(
+                $departureCity ?: null,
+                $arrivalCity ?: null,
+                $date,
+            );
+        }
+
         return $this->render(
             'ride/index.html.twig',
             [
-                'rides' => $rideRepository->findAvailableRides(),
+                'rides' => $rides,
+                'departureCity' => $departureCity,
+                'arrivalCity' => $arrivalCity,
+                'date' => $dateInput,
+                'dateError' => $dateError,
             ],
         );
     }

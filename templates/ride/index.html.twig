@@ -6,6 +6,62 @@
     <main>
         <h1>Trajets disponibles</h1>
 
+        <form
+            method="get"
+            action="{{ path('app_ride_index') }}"
+        >
+            <div>
+                <label for="departureCity">
+                    Ville de départ
+                </label>
+
+                <input
+                    type="text"
+                    id="departureCity"
+                    name="departureCity"
+                    value="{{ departureCity }}"
+                >
+            </div>
+
+            <div>
+                <label for="arrivalCity">
+                    Ville d'arrivée
+                </label>
+
+                <input
+                    type="text"
+                    id="arrivalCity"
+                    name="arrivalCity"
+                    value="{{ arrivalCity }}"
+                >
+            </div>
+
+            <div>
+                <label for="date">
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value="{{ date }}"
+                >
+
+                {% if dateError %}
+                    <p>{{ dateError }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit">
+                Rechercher
+            </button>
+
+            <a href="{{ path('app_ride_index') }}">
+                Réinitialiser
+            </a>
+        </form>
+
         {% if rides is empty %}
             <p>Aucun trajet disponible pour le moment.</p>
         {% else %}
