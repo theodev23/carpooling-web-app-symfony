@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Trajets disponibles - Car-naval{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Trajets disponibles</h1>
+
+        {% if rides is empty %}
+            <p>Aucun trajet disponible pour le moment.</p>
+        {% else %}
+            {% for ride in rides %}
+                <article>
+                    <h2>
+                        {{ ride.departureCity }}
+                        →
+                        {{ ride.arrivalCity }}
+                    </h2>
+
+                    <p>
+                        Départ :
+                        {{ ride.departureAt|date('d/m/Y à H:i') }}
+                    </p>
+
+                    <p>
+                        Places disponibles :
+                        {{ ride.availableSeats }}
+                    </p>
+
+                    <p>
+                        Prix :
+                        {{ ride.price|number_format(2, ',', ' ') }}
+                        € / passager
+                    </p>
+
+                    <p>
+                        Conducteur :
+                        {{ ride.driver.firstName }}
+                        {{ ride.driver.lastName }}
+                    </p>
+                </article>
+            {% endfor %}
+        {% endif %}
+    </main>
+{% endblock %}

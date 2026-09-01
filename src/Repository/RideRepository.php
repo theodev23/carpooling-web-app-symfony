@@ -12,4 +12,15 @@ class RideRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Ride::class);
     }
+
+    public function findAvailableRides(): array
+    {
+        return $this->createQueryBuilder('ride')
+            ->andWhere('ride.departureAt > :now')
+            ->andWhere('ride.availableSeats > 0')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('ride.departureAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

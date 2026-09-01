@@ -34,6 +34,10 @@
                         Accueil
                     </a>
 
+                    <a href="{{ path('app_ride_index') }}">
+                        Trajets
+                    </a>
+
                     {% if app.user %}
                         <span>
                             Bonjour {{ app.user.firstName }}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Ride;
 use App\Entity\User;
 use App\Form\RideFormType;
+use App\Repository\RideRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RideController extends AbstractController
 {
+    #[Route('/rides', name: 'app_ride_index', methods: ['GET'])]
+    public function index(RideRepository $rideRepository): Response
+    {
+        return $this->render(
+            'ride/index.html.twig',
+            [
+                'rides' => $rideRepository->findAvailableRides(),
+            ],
+        );
+    }
+
     #[Route('/rides/new', name: 'app_ride_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
