@@ -40,6 +40,137 @@ class BookingController extends AbstractController
     }
 
     #[Route(
+        '/bookings/{id}/cancel',
+        name: 'app_booking_cancel',
+        requirements: ['id' => '\\d+'],
+        methods: ['POST'],
+    )]
+    public function cancel(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $passenger = $this->getUser();
+
+        if (!$passenger instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $token = (string) $request->request->get('_token');
+
+        if (
+            !$this->isCsrfTokenValid(
+                'cancel_booking_' . $id,
+                $token,
+            )
+        ) {
+            throw $this->createAccessDeniedException(
+                'Jeton CSRF invalide.'
+            );
+        }
+
+        $result = $entityManager
+            ->getConnection()
+            ->transactional(
+                function () use (
+                    $id,
+                    $passenger,
+                    $entityManager,
+                ): string {
+                    $booking = $entityManager->find(
+                        Booking::class,
+                        $id,
+                        LockMode::PESSIMISTIC_WRITE,
+                    );
+
+                    if (!$booking instanceof Booking) {
+                        throw $this->createNotFoundException(
+                            'Réservation introuvable.'
+                        );
+                    }
+
+                    if (
+                        $booking->getPassenger()?->getId()
+                        !== $passenger->getId()
+                    ) {
+                        throw $this->createAccessDeniedException(
+                            'Cette réservation ne vous appartient pas.'
+                        );
+                    }
+
+                    $rideId = $booking->getRide()?->getId();
+
+                    if ($rideId === null) {
+                        throw $this->createNotFoundException(
+                            'Trajet introuvable.'
+                        );
+                    }
+
+                    $ride = $entityManager->find(
+                        Ride::class,
+                        $rideId,
+                        LockMode::PESSIMISTIC_WRITE,
+                    );
+
+                    if (!$ride instanceof Ride) {
+                        throw $this->createNotFoundException(
+                            'Trajet introuvable.'
+                        );
+                    }
+
+                    $departureAt = $ride->getDepartureAt();
+
+                    if (
+                        !$departureAt
+                        || $departureAt <= new \DateTimeImmutable()
+                    ) {
+                        return 'past';
+                    }
+
+                    $availableSeats = $ride->getAvailableSeats();
+
+                    if ($availableSeats === null) {
+                        return 'invalid';
+                    }
+
+                    $ride->setAvailableSeats(
+                        $availableSeats + 1
+                    );
+
+                    $entityManager->remove($booking);
+                    $entityManager->flush();
+
+                    return 'cancelled';
+                },
+            );
+
+        if ($result === 'cancelled') {
+            $this->addFlash(
+                'success',
+                'Votre réservation a été annulée.'
+            );
+        }
+
+        if ($result === 'past') {
+            $this->addFlash(
+                'error',
+                'Un trajet déjà passé ne peut plus être annulé.'
+            );
+        }
+
+        if ($result === 'invalid') {
+            $this->addFlash(
+                'error',
+                'La réservation ne peut pas être annulée.'
+            );
+        }
+
+        return $this->redirectToRoute(
+            'app_booking_index'
+        );
+    }
+
+    #[Route(
         '/rides/{id}/book',
         name: 'app_ride_book',
         requirements: ['id' => '\d+'],

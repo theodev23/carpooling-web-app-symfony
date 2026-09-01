@@ -6,6 +6,14 @@
     <main>
         <h1>Mes réservations</h1>
 
+        {% for message in app.flashes('success') %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
         {% if bookings is empty %}
             <p>Vous n'avez aucune réservation.</p>
         {% else %}
@@ -33,6 +41,32 @@
                         {{ booking.ride.driver.firstName }}
                         {{ booking.ride.driver.lastName }}
                     </p>
+
+                    {% if booking.ride.departureAt > date() %}
+                        <form
+                            method="post"
+                            action="{{ path(
+                                'app_booking_cancel',
+                                {id: booking.id}
+                            ) }}"
+                        >
+                            <input
+                                type="hidden"
+                                name="_token"
+                                value="{{ csrf_token(
+                                    'cancel_booking_' ~ booking.id
+                                ) }}"
+                            >
+
+                            <button type="submit">
+                                Annuler la réservation
+                            </button>
+                        </form>
+                    {% else %}
+                        <p>
+                            Trajet terminé.
+                        </p>
+                    {% endif %}
                 </article>
             {% endfor %}
         {% endif %}
