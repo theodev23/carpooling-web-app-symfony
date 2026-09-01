@@ -276,6 +276,145 @@ class BookingFlowTest extends WebTestCase
         );
     }
 
+    public function testPassengerCannotBookFullRide(): void
+    {
+        $driver = $this->createUser(
+            'full-driver@example.com',
+            'Driver',
+        );
+
+        $passenger = $this->createUser(
+            'full-passenger@example.com',
+            'Passenger',
+        );
+
+        $ride = $this->createRide($driver);
+
+        $rideId = $ride->getId();
+
+        self::assertNotNull($rideId);
+
+        $this->client->loginUser($passenger);
+
+        $crawler = $this->client->request(
+            'GET',
+            '/rides',
+        );
+
+        self::assertResponseIsSuccessful();
+
+        $form = $crawler
+            ->selectButton('Réserver')
+            ->form();
+
+        $entityManager = static::getContainer()
+            ->get(EntityManagerInterface::class);
+
+        $currentRide = $entityManager->find(
+            Ride::class,
+            $rideId,
+        );
+
+        self::assertInstanceOf(
+            Ride::class,
+            $currentRide,
+        );
+
+        $currentRide->setAvailableSeats(0);
+
+        $entityManager->flush();
+
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/rides');
+
+        $entityManager->clear();
+
+        $bookingCount = $entityManager
+            ->getRepository(Booking::class)
+            ->count([]);
+
+        self::assertSame(
+            0,
+            $bookingCount,
+        );
+
+        $updatedRide = $entityManager->find(
+            Ride::class,
+            $rideId,
+        );
+
+        self::assertInstanceOf(
+            Ride::class,
+            $updatedRide,
+        );
+
+        self::assertSame(
+            0,
+            $updatedRide->getAvailableSeats(),
+        );
+    }
+
+    public function testInvalidCsrfCannotCreateBooking(): void
+    {
+        $driver = $this->createUser(
+            'csrf-driver@example.com',
+            'Driver',
+        );
+
+        $passenger = $this->createUser(
+            'csrf-passenger@example.com',
+            'Passenger',
+        );
+
+        $ride = $this->createRide($driver);
+
+        $rideId = $ride->getId();
+
+        self::assertNotNull($rideId);
+
+        $this->client->loginUser($passenger);
+
+        $this->client->request(
+            'POST',
+            '/rides/' . $rideId . '/book',
+            [
+                '_token' => 'invalid-token',
+            ],
+        );
+
+        self::assertResponseStatusCodeSame(403);
+
+        $entityManager = static::getContainer()
+            ->get(EntityManagerInterface::class);
+
+        $entityManager->clear();
+
+        $bookingCount = $entityManager
+            ->getRepository(Booking::class)
+            ->count([]);
+
+        self::assertSame(
+            0,
+            $bookingCount,
+        );
+
+        $updatedRide = $entityManager->find(
+            Ride::class,
+            $rideId,
+        );
+
+        self::assertInstanceOf(
+            Ride::class,
+            $updatedRide,
+        );
+
+        self::assertSame(
+            3,
+            $updatedRide->getAvailableSeats(),
+        );
+    }
+
     private function createUser(
         string $email,
         string $firstName,
